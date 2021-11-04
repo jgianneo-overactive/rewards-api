@@ -3,6 +3,7 @@ package com.awards.controller;
 import com.awards.model.Customer;
 import com.awards.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +16,12 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
-        return null;
+        return new ResponseEntity<>(service.getCustomer(id), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestParam String name) {
-        return null;
+        return new ResponseEntity<>(service.createCustomer(name), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

@@ -17,6 +17,11 @@ public class Customer implements Serializable {
         this.name = name;
     }
 
+    public Customer(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

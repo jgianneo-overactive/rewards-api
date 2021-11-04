@@ -1,29 +1,59 @@
 package com.awards.service;
 
+import com.awards.model.Customer;
+import com.awards.repository.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class CustomerServiceTest {
+class CustomerServiceTest {
 
     @Autowired
     private CustomerService service;
-/*
+
+    @MockBean
+    private CustomerRepository customerRepository;
+
+    private String name = "Jhon";
+    private Long id = 1L;
+
     @Test
-    public void insertCustomer() {
-      Customer newCustomer = service.createCustomer("Juan");
-      assertEquals("Juan", newCustomer.getName());
+    void insertCustomer() {
+      Customer response = new Customer(name);
+      when(customerRepository.save(any())).thenReturn(response);
+      Customer newCustomer = service.createCustomer(name);
+      assertEquals("Jhon", newCustomer.getName());
     }
 
     @Test
-    public getCustomerById() {
-      int id = 1;
-      when(service.getCustomer(id)).thenReturn(new Customer("Juan"));
+    void insertCustomerNullName() {
+        String name = null;
+        assertThrows(IllegalArgumentException.class, () -> service.createCustomer(name), "Name cannot be null");
+    }
+
+    @Test
+    void getCustomerById() {
+      when(customerRepository.getById(id)).thenReturn(new Customer(id, name));
       Customer newCustomer = service.getCustomer(id);
-      assertEquals("Juan", newCustomer.getName());
+      assertEquals("Jhon", newCustomer.getName());
+      assertEquals(1L, newCustomer.getId());
     }
 
+    @Test
+    void getCustomerByIdNotFound() {
+        when(customerRepository.getById(id)).thenReturn(new Customer(id, name));
+        Customer newCustomer = service.getCustomer(id);
+        assertEquals("Jhon", newCustomer.getName());
+        assertEquals(1L, newCustomer.getId());
+    }
+/*
     @Test
     public updateCustomer() {
 

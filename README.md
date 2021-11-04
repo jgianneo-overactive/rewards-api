@@ -1,2 +1,0 @@
-# rewards-api
-Assessment project
