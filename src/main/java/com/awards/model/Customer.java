@@ -13,6 +13,9 @@ public class Customer implements Serializable {
     @Column(name = "name")
     private String name;
 
+    public Customer() {
+    }
+
     public Customer(String name) {
         this.name = name;
     }

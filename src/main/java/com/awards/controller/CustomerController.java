@@ -26,11 +26,11 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Customer> modifyCustomer(@PathVariable Long id, @RequestParam String name) {
-        return null;
+        return new ResponseEntity<>(service.updateCustomer(id, name), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Customer> deleteCustomer(@PathVariable Long id) {
-        return null;
+        return new ResponseEntity<>(service.deleteCustomer(id), HttpStatus.OK);
     }
 }

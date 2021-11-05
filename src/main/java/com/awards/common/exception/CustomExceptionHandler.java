@@ -24,9 +24,9 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<MessageResponse<Object>> hadleArgumentNotValidException(Exception e) {
+    public ResponseEntity<MessageResponse<Object>> hadleIllegalArgumentException(Exception e) {
         return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null), HttpStatus.BAD_REQUEST);
     }
 }
