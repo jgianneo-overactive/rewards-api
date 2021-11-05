@@ -18,6 +18,16 @@ public class Transaction {
     @JoinColumn
     private Date date;
 
+    public Transaction() {
+    }
+
+    public Transaction(Long id, Customer customer, Float cost, Date date) {
+        this.id = id;
+        this.customer = customer;
+        this.cost = cost;
+        this.date = date;
+    }
+
     public Transaction(Customer customer, Float cost, Date date) {
         this.customer = customer;
         this.cost = cost;

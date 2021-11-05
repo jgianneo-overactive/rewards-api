@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +23,9 @@ class CustomerServiceTest {
     @MockBean
     private CustomerRepository repository;
 
-    private String name = "Jhon";
-    private String newName = "Peter";
-    private Long id = 1L;
+    private final String name = "Jhon";
+    private final String newName = "Peter";
+    private final Long id = 1L;
 
     @Test
     void insertCustomer() {
@@ -38,8 +37,7 @@ class CustomerServiceTest {
 
     @Test
     void insertCustomerNullName() {
-        String name = null;
-        assertThrows(IllegalArgumentException.class, () -> service.createCustomer(name), "Name cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> service.createCustomer(null), "Name cannot be null");
     }
 
     @Test
@@ -67,8 +65,7 @@ class CustomerServiceTest {
 
     @Test
     void updateCustomerNullName() {
-        String newName = null;
-        assertThrows(IllegalArgumentException.class, () -> service.updateCustomer(id, newName), "Name cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> service.updateCustomer(id, null), "Name cannot be null");
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.awards.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -41,11 +42,30 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    @Override
+    public Transaction getTransactionById(Long id) {
+        return getTransactionIfExists(id);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByCustomerId(Long id) {
+        getCustomerIfExists(id);
+        return transactionRepository.getTransacionsByCustomerId(id);
+    }
+
     private Customer getCustomerIfExists(Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
         if(!customer.isPresent()) {
             throw new ResourceNotFound("Not found customer with id = " + id);
         }
         return customer.get();
+    }
+
+    private Transaction getTransactionIfExists(Long id) {
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        if(!transaction.isPresent()) {
+            throw new ResourceNotFound("Not found transaction with id = " + id);
+        }
+        return transaction.get();
     }
 }

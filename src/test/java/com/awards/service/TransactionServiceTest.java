@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,10 +31,11 @@ class TransactionServiceTest {
     @MockBean
     private TransactionRepository transactionRepository;
 
-    private Long id = 1L;
-    private Customer customer = new Customer(id, "Jhon");
-    private Date date = new Date(1541427104);
-    private Float costValue = 100.0F;
+    private final Long id = 1L;
+    private final Customer customer = new Customer(id, "Jhon");
+    private final Date date = new Date(1541427104);
+    private final Float costValue = 100.0F;
+    private final Transaction transaction = new Transaction(id, customer,costValue, date);
 
     @Test
     void insertTransaction() {
@@ -46,7 +49,7 @@ class TransactionServiceTest {
 
     @Test
     void insertTransactionNoCostValue() {
-        assertThrows(IllegalArgumentException.class, () -> service.insertTransaction(createTransactionRequest(id, null, date)), "Transaction cost value cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> insertTransaction(id, null, date), "Transaction cost value cannot be null");
     }
 
     @Test
@@ -60,30 +63,51 @@ class TransactionServiceTest {
 
     @Test
     void insertTransactionNoCustomerId() {
-        assertThrows(IllegalArgumentException.class, () -> service.insertTransaction(createTransactionRequest(id, null, date)), "Customer id cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> insertTransaction(id, null, date), "Customer id cannot be null");
     }
 
     @Test
     void insertTransactionCustomerNotFound() {
         when(customerRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFound.class, () -> service.insertTransaction(createTransactionRequest(id, costValue, date)), "Not found customer with id = 1");
+        assertThrows(ResourceNotFound.class, () -> insertTransaction(id, costValue, date), "Not found customer with id = 1");
     }
 
     @Test
     void getTransactionById() {
-
+        when(transactionRepository.findById(id)).thenReturn(Optional.of(transaction));
+        Transaction response = service.getTransactionById(id);
+        assertEquals(date, response.getDate());
+        assertEquals(1L, response.getCustomer().getId());
+        assertEquals(100.0F, response.getCost());
     }
 
     @Test
-    void getTransactionByIdNotFound() {}
+    void getTransactionByIdNotFound() {
+        when(transactionRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFound.class, () -> service.getTransactionById(id), "Not found transaction with id = 1");
+    }
 
     @Test
-    void getTransactionsByCustomerId() {}
+    void getTransactionsByCustomerId() {
+        when(customerRepository.findById(id)).thenReturn(Optional.of(customer));
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(transaction);
+        when(transactionRepository.getTransacionsByCustomerId(id)).thenReturn(transactionList);
+        List<Transaction> response = service.getTransactionsByCustomerId(id);
+        assertEquals(1, response.size());
+    }
 
     @Test
-    void getTransactionByCustomerIdNotFouns() {}
+    void getTransactionByCustomerIdNotFound() {
+        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFound.class, () -> service.getTransactionsByCustomerId(id), "Not found customer with id = 1");
+    }
 
     private CreateTransactionRequest createTransactionRequest(Long id, Float costValue, Date date) {
         return new CreateTransactionRequest(date, id, costValue);
+    }
+
+    private void insertTransaction(Long id, Float costValue, Date date) {
+        service.insertTransaction(createTransactionRequest(id, costValue, date));
     }
 }

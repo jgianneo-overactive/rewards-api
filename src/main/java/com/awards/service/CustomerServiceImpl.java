@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer deleteCustomer(Long id) {
         Customer customer = getCustomerIfExists(id);
-        customerRepository.delete(customer);
+        //customerRepository.delete(customer); TODO change to logical delete
         return customer;
     }
 
