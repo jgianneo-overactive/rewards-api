@@ -105,38 +105,49 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getPointsCustomerReport_1() {
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(customer);
-        when(customerRepository.findAll()).thenReturn(customerList);
-        List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 120.0F , date));
-        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
-        assertEquals(90, report.get(1).getPoints());
-    }
-    @Test
-    void getPointsCustomerReport_2() {
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(customer);
-        when(customerRepository.findAll()).thenReturn(customerList);
-        List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 90.0F , date));
-        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
-        assertEquals(40, report.get(1).getPoints());
-    }
-
-    @Test
     void getPointsCustomerReport_3() {
         List<Customer> customerList = new ArrayList<>();
         customerList.add(customer);
         when(customerRepository.findAll()).thenReturn(customerList);
         List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 40.0F , date));
-        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        transactionList.add(new Transaction(customer, 120.821F , date));
+        transactionList.add(new Transaction(customer, 101.0001F , date));
+        transactionList.add(new Transaction(customer, 99.99F , date));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
         List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(191, report.get(0).getPoints());
+    }
+    @Test
+    void getPointsCustomerReport_2() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        customerList.add(new Customer(2L,"James"));
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 90.5F , date));
+        transactionList.add(new Transaction(customer, 99.90F , date));
+        transactionList.add(new Transaction(customer, 49.2F , date));
+        List<Transaction> transactionList2 = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 49.2F , date));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(2L)).thenReturn(transactionList2);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(89, report.get(0).getPoints());
         assertEquals(0, report.get(1).getPoints());
+    }
+
+    @Test
+    void getPointsCustomerReport_1() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 49.9999F , date));
+        transactionList.add(new Transaction(customer, 49.321F , date));
+        transactionList.add(new Transaction(customer, 49.0F , date));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(0, report.get(0).getPoints());
     }
 
     private CreateTransactionRequest createTransactionRequest(Long id, Float costValue, Date date) {

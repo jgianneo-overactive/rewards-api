@@ -9,7 +9,6 @@ import com.awards.repository.CustomerRepository;
 import com.awards.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -61,25 +60,30 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<PointsCustomerReport> generatePointsCustomerReport() {
         List<Customer> customerList = customerRepository.findAll();
-        /*customerList.stream()
-                .map(c -> {
-
-                })
-                .collect(Collectors.toList());*/
-        return null;
+        log.info("Obtained customer list");
+        return customerList.stream()
+                .map(this::generateCustomerReport)
+                .collect(Collectors.toList());
     }
 
     private PointsCustomerReport generateCustomerReport(Customer customer) {
-        List<Transaction> transactionList = transactionRepository.getLastThreeMonthsTransacionsByCustomerId(customer.getId());
-        //transactionList.stream().
-        return new PointsCustomerReport(customer, calculatePoint(270.0F));
+        log.info("Calculating points for customer: " + customer.getId());
+        Integer calculatedPoints = transactionRepository
+                .getLastThreeMonthsTransacionsByCustomerId(customer.getId())
+                .stream()
+                .mapToInt(t -> calculatePoint(t.getCost()))
+                .sum();
+        log.info("Generating report for customer: " + customer.getId());
+        return new PointsCustomerReport(customer, calculatedPoints);
     }
 
     private Integer calculatePoint(float floatValue) {
         Integer value = (int) floatValue;
         if (value > 100) {
+            log.info("(" + value + " - 100)*2 + 50");
             return (value - 100)*2 + 50;
         } else if (value > 50) {
+            log.info(value + " - 50");
             return value - 50;
         }
         return 0;

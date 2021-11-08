@@ -2,11 +2,11 @@ package com.awards.model;
 
 public class PointsCustomerReport {
     private Customer customer;
-    private Integer points;
+    private Integer totalPoints;
 
     public PointsCustomerReport(Customer customer, Integer points) {
         this.customer = customer;
-        this.points = points;
+        this.totalPoints = points;
     }
 
     public Customer getCustomer() {
@@ -18,10 +18,10 @@ public class PointsCustomerReport {
     }
 
     public Integer getPoints() {
-        return points;
+        return totalPoints;
     }
 
     public void setPoints(Integer points) {
-        this.points = points;
+        this.totalPoints = points;
     }
 }
