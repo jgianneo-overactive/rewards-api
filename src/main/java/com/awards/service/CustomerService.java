@@ -2,6 +2,8 @@ package com.awards.service;
 
 import com.awards.model.Customer;
 
+import java.util.List;
+
 public interface CustomerService {
     Customer createCustomer(String name);
 
@@ -10,4 +12,6 @@ public interface CustomerService {
     Customer updateCustomer(Long id, String newName);
 
     Customer deleteCustomer(Long id);
+
+    List<Customer> getAllCustomers();
 }

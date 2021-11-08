@@ -3,6 +3,7 @@ package com.awards.service;
 import com.awards.common.exception.ResourceNotFound;
 import com.awards.controller.CreateTransactionRequest;
 import com.awards.model.Customer;
+import com.awards.model.PointsCustomerReport;
 import com.awards.model.Transaction;
 import com.awards.repository.CustomerRepository;
 import com.awards.repository.TransactionRepository;
@@ -101,6 +102,41 @@ class TransactionServiceTest {
     void getTransactionByCustomerIdNotFound() {
         when(customerRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFound.class, () -> service.getTransactionsByCustomerId(id), "Not found customer with id = 1");
+    }
+
+    @Test
+    void getPointsCustomerReport_1() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 120.0F , date));
+        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(90, report.get(1).getPoints());
+    }
+    @Test
+    void getPointsCustomerReport_2() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 90.0F , date));
+        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(40, report.get(1).getPoints());
+    }
+
+    @Test
+    void getPointsCustomerReport_3() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 40.0F , date));
+        when(transactionRepository.getTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        assertEquals(0, report.get(1).getPoints());
     }
 
     private CreateTransactionRequest createTransactionRequest(Long id, Float costValue, Date date) {

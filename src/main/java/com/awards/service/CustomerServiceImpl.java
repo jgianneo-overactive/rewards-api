@@ -5,6 +5,8 @@ import com.awards.model.Customer;
 import com.awards.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,6 +41,11 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = getCustomerIfExists(id);
         //customerRepository.delete(customer); TODO change to logical delete
         return customer;
+    }
+
+    @Override
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
     }
 
     private boolean notNullName(String name) {

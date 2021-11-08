@@ -3,15 +3,16 @@ package com.awards.service;
 import com.awards.common.exception.ResourceNotFound;
 import com.awards.controller.CreateTransactionRequest;
 import com.awards.model.Customer;
+import com.awards.model.PointsCustomerReport;
 import com.awards.model.Transaction;
 import com.awards.repository.CustomerRepository;
 import com.awards.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -22,6 +23,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    private Logger log = Logger.getLogger("TransactionServiceImpl");
 
     @Override
     public Transaction insertTransaction(CreateTransactionRequest request) {
@@ -30,6 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         Date date;
         if (Objects.isNull(request.getDate())) {
+            log.info("request.getDate() = null, Initializating date to current");
             date = new Date();
         } else {
             date = request.getDate();
@@ -38,6 +41,8 @@ public class TransactionServiceImpl implements TransactionService {
             throw new IllegalArgumentException("Customer id cannot be null");
         }
         Customer customer = getCustomerIfExists(request.getCustomerId());
+        log.info("Found customer with id = " + request.getCustomerId());
+
         Transaction transaction = new Transaction(customer, request.getCostValue(), date);
         return transactionRepository.save(transaction);
     }
@@ -51,6 +56,33 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Transaction> getTransactionsByCustomerId(Long id) {
         getCustomerIfExists(id);
         return transactionRepository.getTransacionsByCustomerId(id);
+    }
+
+    @Override
+    public List<PointsCustomerReport> generatePointsCustomerReport() {
+        List<Customer> customerList = customerRepository.findAll();
+        /*customerList.stream()
+                .map(c -> {
+
+                })
+                .collect(Collectors.toList());*/
+        return null;
+    }
+
+    private PointsCustomerReport generateCustomerReport(Customer customer) {
+        List<Transaction> transactionList = transactionRepository.getLastThreeMonthsTransacionsByCustomerId(customer.getId());
+        //transactionList.stream().
+        return new PointsCustomerReport(customer, calculatePoint(270.0F));
+    }
+
+    private Integer calculatePoint(float floatValue) {
+        Integer value = (int) floatValue;
+        if (value > 100) {
+            return (value - 100)*2 + 50;
+        } else if (value > 50) {
+            return value - 50;
+        }
+        return 0;
     }
 
     private Customer getCustomerIfExists(Long id) {

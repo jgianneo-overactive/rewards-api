@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,6 +54,16 @@ class CustomerServiceTest {
     void getCustomerByIdNotFound() {
         when(repository.findById(id)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFound.class, () -> service.getCustomer(id), "Not found customer with id = 1");
+    }
+
+    @Test
+    void getAllCustomers() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(new Customer(id, name));
+        customerList.add(new Customer(2L, newName));
+        when(repository.findAll()).thenReturn(customerList);
+        List<Customer> response = service.getAllCustomers();
+        assertEquals(2, response.size());
     }
 
     @Test

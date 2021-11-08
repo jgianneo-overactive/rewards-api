@@ -1,5 +1,6 @@
 package com.awards.controller;
 
+import com.awards.model.PointsCustomerReport;
 import com.awards.model.Transaction;
 import com.awards.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,10 @@ public class TransactionController {
     @GetMapping("/customer/{id}")
     public ResponseEntity<List<Transaction>> getTransactionByCustomerId(@PathVariable Long id) {
         return new ResponseEntity<>(transactionService.getTransactionsByCustomerId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/reports")
+    public ResponseEntity<List<PointsCustomerReport>> getTransactionByCustomerId() {
+        return new ResponseEntity<>(transactionService.generatePointsCustomerReport(), HttpStatus.OK);
     }
 }
