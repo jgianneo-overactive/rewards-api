@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/customers")
-@Api(value = "CustomerController", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "Customer Controller", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomerController {
 
     @Autowired
