@@ -68,13 +68,27 @@ public class TransactionServiceImpl implements TransactionService {
 
     private PointsCustomerReport generateCustomerReport(Customer customer) {
         log.info("Calculating points for customer: " + customer.getId());
-        Integer calculatedPoints = transactionRepository
-                .getLastThreeMonthsTransacionsByCustomerId(customer.getId())
-                .stream()
+        List<Transaction> transactionList = transactionRepository
+                .getLastThreeMonthsTransacionsByCustomerId(customer.getId());
+        Integer lastMonthCalculatedPoints = calculatePointMonth(transactionList, 0);
+
+        Integer monthAgoCalculatedPoints = calculatePointMonth(transactionList, 1);
+
+        Integer twoMonthsAgoCalculatedPoints = calculatePointMonth(transactionList, 2);
+
+        Integer totalPoints = twoMonthsAgoCalculatedPoints + monthAgoCalculatedPoints + lastMonthCalculatedPoints;
+        log.info("Generating report for customer: " + customer.getId());
+        return new PointsCustomerReport(customer, lastMonthCalculatedPoints, monthAgoCalculatedPoints, twoMonthsAgoCalculatedPoints, totalPoints);
+    }
+
+    private Integer calculatePointMonth(List<Transaction> transactionList, Integer monthsAgo) {
+        return transactionList.stream()
+                .filter(t -> {
+                    Date today = new Date();
+                    return t.getDate().getMonth() == today.getMonth() - monthsAgo;
+                })
                 .mapToInt(t -> calculatePoint(t.getCost()))
                 .sum();
-        log.info("Generating report for customer: " + customer.getId());
-        return new PointsCustomerReport(customer, calculatedPoints);
     }
 
     private Integer calculatePoint(float floatValue) {
