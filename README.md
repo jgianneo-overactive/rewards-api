@@ -8,6 +8,6 @@
 swagger: http://localhost:8080/swagger-ui.html#/
 
 To do:
-+ Implement Strategy for different ways to calculate points award and points report by months
++ Change date for Calendar in points report calculation operation
 + Implement logical delete for customers
 + Add dockerfile for Mysql instance
