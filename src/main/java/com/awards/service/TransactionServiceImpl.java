@@ -9,7 +9,11 @@ import com.awards.repository.CustomerRepository;
 import com.awards.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -27,11 +31,12 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction insertTransaction(CreateTransactionRequest request) {
         if (Objects.isNull(request.getCostValue())) {
-            throw new IllegalArgumentException("Transaction cost value cannot be null");
+            throw new IllegalArgumentException("Transaction cost "
+                   + "value cannot less than or equal to 0");
         }
         Date date;
         if (Objects.isNull(request.getDate())) {
-            log.info("request.getDate() = null, Initializating date to current");
+            log.info("request.getDate() = null, Initializing date to current");
             date = new Date();
         } else {
             date = request.getDate();
@@ -82,30 +87,23 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Integer calculatePointMonth(List<Transaction> transactionList, Integer monthsAgo) {
+        PointsCalculationStrategy calc = new NormalPointsStrategy();
         return transactionList.stream()
                 .filter(t -> {
-                    Date today = new Date();
-                    return t.getDate().getMonth() == today.getMonth() - monthsAgo;
+                    Calendar cal1 = Calendar.getInstance();
+                    Calendar cal2 = Calendar.getInstance();
+                    cal1.setTime(new Date());
+                    cal2.setTime(t.getDate());
+                    cal2.add(Calendar.MONTH, - monthsAgo);
+                    return cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
                 })
-                .mapToInt(t -> calculatePoint(t.getCost()))
+                .mapToInt(t -> calc.calculatePoint(t.getCost()))
                 .sum();
-    }
-
-    private Integer calculatePoint(float floatValue) {
-        Integer value = (int) floatValue;
-        if (value > 100) {
-            log.info("(" + value + " - 100)*2 + 50");
-            return (value - 100)*2 + 50;
-        } else if (value > 50) {
-            log.info(value + " - 50");
-            return value - 50;
-        }
-        return 0;
     }
 
     private Customer getCustomerIfExists(Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
-        if(!customer.isPresent()) {
+        if (!customer.isPresent()) {
             throw new ResourceNotFound("Not found customer with id = " + id);
         }
         return customer.get();
@@ -113,7 +111,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction getTransactionIfExists(Long id) {
         Optional<Transaction> transaction = transactionRepository.findById(id);
-        if(!transaction.isPresent()) {
+        if (!transaction.isPresent()) {
             throw new ResourceNotFound("Not found transaction with id = " + id);
         }
         return transaction.get();
