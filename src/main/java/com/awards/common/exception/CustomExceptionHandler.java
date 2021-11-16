@@ -14,18 +14,21 @@ public class CustomExceptionHandler {
     @ExceptionHandler(value = {ProcessException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<MessageResponse<Object>> hadleProcessException(Exception e) {
-        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null)
+                , HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {ResourceNotFound.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<MessageResponse<Object>> hadleResourceNotFoundException(Exception e) {
-        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null)
+                , HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<MessageResponse<Object>> hadleIllegalArgumentException(Exception e) {
-        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageResponse<>(ERROR, e.getMessage(), null),
+                HttpStatus.BAD_REQUEST);
     }
 }

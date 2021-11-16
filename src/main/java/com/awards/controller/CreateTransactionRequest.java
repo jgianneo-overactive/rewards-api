@@ -1,10 +1,13 @@
 package com.awards.controller;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CreateTransactionRequest {
     private Date date;
+    @NotNull(message = "User is cannot be null")
     private Long customerId;
+    @NotNull(message = "Transaction cost value cannot be null")
     private Float costValue;
 
     public CreateTransactionRequest(Date date, Long customerId, Float costValue) {

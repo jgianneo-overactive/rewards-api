@@ -110,12 +110,13 @@ class TransactionServiceTest {
         customerList.add(customer);
         when(customerRepository.findAll()).thenReturn(customerList);
         List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 120.821F , date));
-        transactionList.add(new Transaction(customer, 101.0001F , date));
-        transactionList.add(new Transaction(customer, 99.99F , date));
+        transactionList.add(new Transaction(customer, 120.821F , new Date()));
+        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
+        transactionList.add(new Transaction(customer, 99.99F , new Date()));
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
         List<PointsCustomerReport> report = service.generatePointsCustomerReport();
         assertEquals(191, report.get(0).getPoints());
+        assertEquals(191, report.get(0).getLastMonthPoints());
     }
     @Test
     void getPointsCustomerReport_2() {
@@ -124,8 +125,8 @@ class TransactionServiceTest {
         customerList.add(new Customer(2L,"James"));
         when(customerRepository.findAll()).thenReturn(customerList);
         List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 90.5F , date));
-        transactionList.add(new Transaction(customer, 99.90F , date));
+        transactionList.add(new Transaction(customer, 90.5F , new Date()));
+        transactionList.add(new Transaction(customer, 99.90F , new Date()));
         transactionList.add(new Transaction(customer, 49.2F , date));
         List<Transaction> transactionList2 = new ArrayList<>();
         transactionList.add(new Transaction(customer, 49.2F , date));
@@ -133,6 +134,7 @@ class TransactionServiceTest {
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(2L)).thenReturn(transactionList2);
         List<PointsCustomerReport> report = service.generatePointsCustomerReport();
         assertEquals(89, report.get(0).getPoints());
+        assertEquals(89, report.get(0).getLastMonthPoints());
         assertEquals(0, report.get(1).getPoints());
     }
 

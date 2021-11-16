@@ -48,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private boolean notNullName(String name) {
-        if(Objects.isNull(name)){
+        if (Objects.isNull(name)) {
             throw new IllegalArgumentException("Name cannot be null");
         }
         return true;
@@ -56,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Customer getCustomerIfExists(Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
-        if(!customer.isPresent()) {
+        if (!customer.isPresent()) {
             throw new ResourceNotFound("Not found customer with id = " + id);
         }
         return customer.get();
