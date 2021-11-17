@@ -8,6 +8,6 @@
 swagger: http://localhost:8080/swagger-ui.html#/
 
 To do:
-+ Change date for Calendar in points report calculation operation
++ Implement executor time selector for Strategy pattern
 + Implement logical delete for customers
 + Add dockerfile for Mysql instance
