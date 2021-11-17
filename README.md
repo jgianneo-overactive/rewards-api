@@ -8,6 +8,6 @@
 swagger: http://localhost:8080/swagger-ui.html#/
 
 To do:
-+ Implement executor time selector for Strategy pattern
++ Implement time exuction selector for Strategy pattern
 + Implement logical delete for customers
 + Add dockerfile for Mysql instance
