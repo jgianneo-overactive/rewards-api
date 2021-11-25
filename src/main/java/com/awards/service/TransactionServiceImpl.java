@@ -63,31 +63,30 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<PointsCustomerReport> generatePointsCustomerReport() {
+    public List<PointsCustomerReport> generatePointsCustomerReport(Integer methodIndex) {
         List<Customer> customerList = customerRepository.findAll();
         log.info("Obtained customer list");
         return customerList.stream()
-                .map(this::generateCustomerReport)
+                .map(c -> generateCustomerReport(c, methodIndex))
                 .collect(Collectors.toList());
     }
 
-    private PointsCustomerReport generateCustomerReport(Customer customer) {
+    private PointsCustomerReport generateCustomerReport(Customer customer, Integer methodIndex) {
         log.info("Calculating points for customer: " + customer.getId());
         List<Transaction> transactionList = transactionRepository
                 .getLastThreeMonthsTransacionsByCustomerId(customer.getId());
-        Integer lastMonthCalculatedPoints = calculatePointMonth(transactionList, 0);
+        Integer lastMonthCalculatedPoints = calculatePointMonth(transactionList, methodIndex,0);
 
-        Integer monthAgoCalculatedPoints = calculatePointMonth(transactionList, 1);
+        Integer monthAgoCalculatedPoints = calculatePointMonth(transactionList, methodIndex,1);
 
-        Integer twoMonthsAgoCalculatedPoints = calculatePointMonth(transactionList, 2);
+        Integer twoMonthsAgoCalculatedPoints = calculatePointMonth(transactionList, methodIndex, 2);
 
         Integer totalPoints = twoMonthsAgoCalculatedPoints + monthAgoCalculatedPoints + lastMonthCalculatedPoints;
         log.info("Generating report for customer: " + customer.getId());
         return new PointsCustomerReport(customer, lastMonthCalculatedPoints, monthAgoCalculatedPoints, twoMonthsAgoCalculatedPoints, totalPoints);
     }
 
-    private Integer calculatePointMonth(List<Transaction> transactionList, Integer monthsAgo) {
-        PointsCalculationStrategy calc = new NormalPointsStrategy();
+    private Integer calculatePointMonth(List<Transaction> transactionList, Integer methodIndex, Integer monthsAgo) {
         return transactionList.stream()
                 .filter(t -> {
                     Calendar cal1 = Calendar.getInstance();
@@ -97,7 +96,7 @@ public class TransactionServiceImpl implements TransactionService {
                     cal2.add(Calendar.MONTH, - monthsAgo);
                     return cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
                 })
-                .mapToInt(t -> calc.calculatePoint(t.getCost()))
+                .mapToInt(t -> PointStrategy.strategy.get(methodIndex).calculatePoint(t.getCost()))
                 .sum();
     }
 

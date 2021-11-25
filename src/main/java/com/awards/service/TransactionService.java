@@ -12,5 +12,5 @@ public interface TransactionService {
 
     List<Transaction> getTransactionsByCustomerId(Long id);
 
-    List<PointsCustomerReport> generatePointsCustomerReport();
+    List<PointsCustomerReport> generatePointsCustomerReport(Integer methodIndex);
 }

@@ -114,7 +114,7 @@ class TransactionServiceTest {
         transactionList.add(new Transaction(customer, 101.0001F , new Date()));
         transactionList.add(new Transaction(customer, 99.99F , new Date()));
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(2);
         assertEquals(191, report.get(0).getPoints());
         assertEquals(191, report.get(0).getLastMonthPoints());
     }
@@ -132,7 +132,7 @@ class TransactionServiceTest {
         transactionList.add(new Transaction(customer, 49.2F , date));
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(2L)).thenReturn(transactionList2);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(2);
         assertEquals(89, report.get(0).getPoints());
         assertEquals(89, report.get(0).getLastMonthPoints());
         assertEquals(0, report.get(1).getPoints());
@@ -148,7 +148,7 @@ class TransactionServiceTest {
         transactionList.add(new Transaction(customer, 49.321F , date));
         transactionList.add(new Transaction(customer, 49.0F , date));
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport();
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(2);
         assertEquals(0, report.get(0).getPoints());
     }
 

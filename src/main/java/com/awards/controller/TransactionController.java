@@ -49,6 +49,6 @@ public class TransactionController {
     @GetMapping("/reports")
     @ApiOperation("Generate all customers points reports")
     public ResponseEntity<List<PointsCustomerReport>> getTransactionByCustomerId() {
-        return new ResponseEntity<>(transactionService.generatePointsCustomerReport(), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.generatePointsCustomerReport(2), HttpStatus.OK);
     }
 }
