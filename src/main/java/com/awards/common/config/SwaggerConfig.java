@@ -1,5 +1,7 @@
 package com.awards.common.config;
 
+
+import com.awards.controller.CustomerController;
 import com.awards.controller.TransactionController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,6 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @PropertySource("classpath:swagger.properties")
+@ComponentScan(basePackageClasses = CustomerController.class)
 @ComponentScan(basePackageClasses = TransactionController.class)
 @Configuration
 public class SwaggerConfig {
