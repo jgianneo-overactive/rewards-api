@@ -105,7 +105,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getPointsCustomerReport_3() {
+    void getDefaultPointsCustomerReport_3() {
         List<Customer> customerList = new ArrayList<>();
         customerList.add(customer);
         when(customerRepository.findAll()).thenReturn(customerList);
@@ -114,12 +114,12 @@ class TransactionServiceTest {
         transactionList.add(new Transaction(customer, 101.0001F , new Date()));
         transactionList.add(new Transaction(customer, 99.99F , new Date()));
         when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport(2);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(null);
         assertEquals(191, report.get(0).getPoints());
         assertEquals(191, report.get(0).getLastMonthPoints());
     }
     @Test
-    void getPointsCustomerReport_2() {
+    void getNormalPointsCustomerReport_2() {
         List<Customer> customerList = new ArrayList<>();
         customerList.add(customer);
         customerList.add(new Customer(2L,"James"));
@@ -139,7 +139,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getPointsCustomerReport_1() {
+    void getNormalPointsCustomerReport_1() {
         List<Customer> customerList = new ArrayList<>();
         customerList.add(customer);
         when(customerRepository.findAll()).thenReturn(customerList);
@@ -151,7 +151,52 @@ class TransactionServiceTest {
         List<PointsCustomerReport> report = service.generatePointsCustomerReport(2);
         assertEquals(0, report.get(0).getPoints());
     }
-
+    @Test
+    void getNoPointsCustomerReport_3() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 120.821F , new Date()));
+        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
+        transactionList.add(new Transaction(customer, 99.99F , new Date()));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(0);
+        assertEquals(0, report.get(0).getPoints());
+        assertEquals(0, report.get(0).getLastMonthPoints());
+    }
+    @Test
+    void getSimplePointsCustomerReport_3() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 120.821F , new Date()));
+        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
+        transactionList.add(new Transaction(customer, 99.99F , new Date()));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(1);
+        assertEquals(170, report.get(0).getPoints());
+        assertEquals(170, report.get(0).getLastMonthPoints());
+    }
+    @Test
+    void getExtraPointsCustomerReport_3() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 220.821F , new Date()));
+        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
+        transactionList.add(new Transaction(customer, 99.99F , new Date()));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        List<PointsCustomerReport> report = service.generatePointsCustomerReport(3);
+        assertEquals(411, report.get(0).getPoints());
+        assertEquals(411, report.get(0).getLastMonthPoints());
+    }
+    @Test
+    void getPointsCustomerReportMethodNoExist() {
+        assertThrows(IllegalArgumentException.class, () -> service.generatePointsCustomerReport(4));
+    }
     private CreateTransactionRequest createTransactionRequest(Long id, Float costValue, Date date) {
         return new CreateTransactionRequest(date, id, costValue);
     }
