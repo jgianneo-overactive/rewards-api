@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
@@ -48,7 +49,7 @@ public class TransactionController {
 
     @GetMapping("/reports")
     @ApiOperation("Generate all customers points reports")
-    public ResponseEntity<List<PointsCustomerReport>> getTransactionByCustomerId() {
-        return new ResponseEntity<>(transactionService.generatePointsCustomerReport(2), HttpStatus.OK);
+    public ResponseEntity<List<PointsCustomerReport>> getTransactionByCustomerId(@RequestParam(defaultValue = "2") Integer methodId) {
+        return new ResponseEntity<>(transactionService.generatePointsCustomerReport(methodId), HttpStatus.OK);
     }
 }

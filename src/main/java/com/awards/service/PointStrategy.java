@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class PointStrategy {
+
     private static final Logger log = Logger.getLogger("PointsStrategy class");
     private static final Integer N200 = 200;
     private static final Integer N100 = 100;
     private static final Integer N50 = 50;
 
-    static PointsCalculationStrategy extraPointStrategy = floatValue -> {
+    private static final PointsCalculationStrategy extraPointStrategy = floatValue -> {
         log.info("Extra Points Strategy selected whit value " + floatValue);
         Integer intValue = floatValue.intValue();
         if (intValue > N200) {
@@ -25,7 +26,7 @@ public class PointStrategy {
         return 0;
     };
 
-    static PointsCalculationStrategy normalPointStrategy = floatValue -> {
+    private static final PointsCalculationStrategy normalPointStrategy = floatValue -> {
         log.info("Normal Points Strategy selected whit value " + floatValue);
         Integer intValue = floatValue.intValue();
         if (intValue > N100) {
@@ -36,7 +37,7 @@ public class PointStrategy {
         return 0;
     };
 
-    static PointsCalculationStrategy simplePointStrategy = floatValue -> {
+    private static final PointsCalculationStrategy simplePointStrategy = floatValue -> {
         log.info("Simple Points Strategy selected whit value " + floatValue);
         Integer intValue = floatValue.intValue();
         if (intValue > N50) {
@@ -45,7 +46,7 @@ public class PointStrategy {
         return 0;
     };
 
-    static PointsCalculationStrategy noPointStrategy = floatValue -> {
+    private static final PointsCalculationStrategy noPointStrategy = floatValue -> {
         log.info("No Strategy selected whit value " + floatValue);
         return 0;
     };
@@ -56,4 +57,6 @@ public class PointStrategy {
         normalPointStrategy,
         extraPointStrategy
     );
+
+    private PointStrategy() {}
 }

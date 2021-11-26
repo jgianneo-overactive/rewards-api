@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
+    private static final Integer MAXMETHODID = 3;
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -64,6 +65,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<PointsCustomerReport> generatePointsCustomerReport(Integer methodIndex) {
+        if (methodIndex > MAXMETHODID) {
+            throw new IllegalArgumentException("No are no methods with id greater than " + MAXMETHODID);
+        }
         List<Customer> customerList = customerRepository.findAll();
         log.info("Obtained customer list");
         return customerList.stream()
