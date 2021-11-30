@@ -105,20 +105,6 @@ class TransactionServiceTest {
     }
 
     @Test
-    void getDefaultPointsCustomerReport_3() {
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(customer);
-        when(customerRepository.findAll()).thenReturn(customerList);
-        List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(customer, 120.821F , new Date()));
-        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
-        transactionList.add(new Transaction(customer, 99.99F , new Date()));
-        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
-        List<PointsCustomerReport> report = service.generatePointsCustomerReport(null);
-        assertEquals(191, report.get(0).getPoints());
-        assertEquals(191, report.get(0).getLastMonthPoints());
-    }
-    @Test
     void getNormalPointsCustomerReport_2() {
         List<Customer> customerList = new ArrayList<>();
         customerList.add(customer);
@@ -195,7 +181,13 @@ class TransactionServiceTest {
     }
     @Test
     void getPointsCustomerReportMethodNoExist() {
-        assertThrows(IllegalArgumentException.class, () -> service.generatePointsCustomerReport(4));
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 220.821F , new Date()));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        assertThrows(IllegalArgumentException.class, () -> service.generatePointsCustomerReport(10));
     }
     private CreateTransactionRequest createTransactionRequest(Long id, Float costValue, Date date) {
         return new CreateTransactionRequest(date, id, costValue);

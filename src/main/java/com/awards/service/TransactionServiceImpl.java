@@ -1,5 +1,6 @@
 package com.awards.service;
 
+import com.awards.common.exception.ProcessException;
 import com.awards.common.exception.ResourceNotFound;
 import com.awards.controller.CreateTransactionRequest;
 import com.awards.model.Customer;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-    private static final Integer MAXMETHODID = 3;
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -65,9 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<PointsCustomerReport> generatePointsCustomerReport(Integer methodIndex) {
-        if (methodIndex > MAXMETHODID) {
-            throw new IllegalArgumentException("No are no methods with id greater than " + MAXMETHODID);
-        }
+
         List<Customer> customerList = customerRepository.findAll();
         log.info("Obtained customer list");
         return customerList.stream()
@@ -91,17 +89,25 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Integer calculatePointMonth(List<Transaction> transactionList, Integer methodIndex, Integer monthsAgo) {
-        return transactionList.stream()
-                .filter(t -> {
-                    Calendar cal1 = Calendar.getInstance();
-                    Calendar cal2 = Calendar.getInstance();
-                    cal1.setTime(new Date());
-                    cal2.setTime(t.getDate());
-                    cal2.add(Calendar.MONTH, - monthsAgo);
-                    return cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
-                })
-                .mapToInt(t -> PointStrategy.strategy.get(methodIndex).calculatePoint(t.getCost()))
-                .sum();
+        try {
+            return transactionList.stream()
+                    .filter(t -> {
+                        Calendar cal1 = Calendar.getInstance();
+                        Calendar cal2 = Calendar.getInstance();
+                        cal1.setTime(new Date());
+                        cal2.setTime(t.getDate());
+                        cal2.add(Calendar.MONTH, -monthsAgo);
+                        return cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+                    })
+                    .mapToInt(t -> PointStrategy.strategy.get(methodIndex).calculatePoint(t.getCost()))
+                    .sum();
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            log.warning("There is not method with id " + methodIndex);
+            throw new IllegalArgumentException("There is not method with id " + methodIndex);
+        } catch (Exception e) {
+            log.warning("An error ocurred: " + e.getMessage());
+            throw new ProcessException("An error ocurred");
+        }
     }
 
     private Customer getCustomerIfExists(Long id) {
