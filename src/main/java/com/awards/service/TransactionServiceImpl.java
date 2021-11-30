@@ -65,7 +65,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<PointsCustomerReport> generatePointsCustomerReport(Integer methodIndex) {
-
+        if (Objects.isNull(methodIndex)) {
+            log.warning("Method id cannot be null");
+            throw new ProcessException("Method id cannot be null");
+        }
         List<Customer> customerList = customerRepository.findAll();
         log.info("Obtained customer list");
         return customerList.stream()

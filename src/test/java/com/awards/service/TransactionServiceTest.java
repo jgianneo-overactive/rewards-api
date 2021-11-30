@@ -1,5 +1,6 @@
 package com.awards.service;
 
+import com.awards.common.exception.ProcessException;
 import com.awards.common.exception.ResourceNotFound;
 import com.awards.controller.CreateTransactionRequest;
 import com.awards.model.Customer;
@@ -178,6 +179,18 @@ class TransactionServiceTest {
         List<PointsCustomerReport> report = service.generatePointsCustomerReport(3);
         assertEquals(411, report.get(0).getPoints());
         assertEquals(411, report.get(0).getLastMonthPoints());
+    }
+    @Test
+    void getDefaultPointsCustomerReportNullMethodId() {
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(customer);
+        when(customerRepository.findAll()).thenReturn(customerList);
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(customer, 120.821F , new Date()));
+        transactionList.add(new Transaction(customer, 101.0001F , new Date()));
+        transactionList.add(new Transaction(customer, 99.99F , new Date()));
+        when(transactionRepository.getLastThreeMonthsTransacionsByCustomerId(1L)).thenReturn(transactionList);
+        assertThrows(ProcessException.class, () -> service.generatePointsCustomerReport(null));
     }
     @Test
     void getPointsCustomerReportMethodNoExist() {
